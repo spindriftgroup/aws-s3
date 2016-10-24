@@ -1,0 +1,75 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "com.gradle.publish:plugin-publish-plugin:0.9.6"
+  }
+}
+
+apply plugin: "com.gradle.plugin-publish"
+apply plugin: 'groovy'
+apply plugin: 'idea'
+
+repositories {
+  jcenter()
+}
+
+dependencies {
+  compile (
+    gradleApi(),
+    localGroovy()
+  )
+}
+
+import org.gradle.internal.jvm.Jvm
+
+//Set the default build and version properties
+group 'com.spindrift.gradle'
+
+project.ext {
+  timestamp = new Date()
+  buildUser=System.getProperty('user.name')
+  buildNumber="(development build by $buildUser)"
+}
+if (!hasProperty('release') || (hasProperty('release') && release!='true')) {
+  project.version+='-SNAPSHOT'
+}
+
+//Set java compatibilities
+targetCompatibility = sourceCompatibility = "1.6"
+project.tasks.withType(GroovyCompile) { task ->
+  task.sourceCompatibility = project.sourceCompatibility
+  task.targetCompatibility = project.targetCompatibility
+}
+
+pluginBundle {
+  website = 'http://spindriftgroup.com'
+  vcsUrl = 'https://github.com/spindriftgroup/aws-s3'
+  description = 'Simple AWS S3 plugin'
+  tags = ['aws','s3','spindrift']
+
+  plugins {
+    awsS3Plugin {
+      id = 'com.spindrift.aws-s3'
+      displayName = 'Simple AWS S3 plugin Plugin'
+    }
+  }
+}
+
+//Apply additional functionality
+apply from: 'gradle/maven.gradle'
+
+//Set the default task when none supplied:
+defaultTasks 'install'
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '3.1'
+}
+
+project.logger.quiet "Plugin ${project.name} version: ${project.version}"
+project.logger.quiet "BuildNumber: ${buildNumber}"
+project.logger.quiet "Gradle Version: ${GradleVersion.current().getVersion()}"
+project.logger.quiet "Java Version: ${Jvm.current()}"
