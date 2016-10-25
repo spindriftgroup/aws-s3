@@ -41,12 +41,10 @@ if (!hasProperty('release') || (hasProperty('release') && release!='true')) {
 }
 else {
   buildNumber="${(System.getenv()['buildNumber']) ?: ''}"
-}
-gradle.taskGraph.whenReady { taskGraph ->
-  project.ext.releaseBuild = (taskGraph.hasTask(':publishPlugins')
-      || (project.hasProperty('publishRelease') && publishRelease == 'true'))
-  if (releaseBuild && !buildNumber) {
-    throw new GradleException("No valid build number found for release build.")
+  if ((project.hasProperty('publishRelease') && publishRelease == 'true')) {
+    if (!buildNumber) {
+      throw new GradleException("No valid build number found for release build.")
+    }
   }
 }
 
