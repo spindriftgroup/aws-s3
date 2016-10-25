@@ -36,17 +36,16 @@ project.ext {
   buildNumber="(development build by $buildUser)"
 }
 
-gradle.taskGraph.whenReady { taskGraph ->
-  project.ext.releaseBuild = (taskGraph.hasTask(':publishPlugins')
-      || (project.hasProperty('publishRelease') && publishRelease == 'true'))
-}
-
 if (!hasProperty('release') || (hasProperty('release') && release!='true')) {
   project.version += '-SNAPSHOT'
 }
 else {
   buildNumber="${(System.getenv()['buildNumber']) ?: ''}"
-  if (!buildNumber && releaseBuild) {
+}
+gradle.taskGraph.whenReady { taskGraph ->
+  project.ext.releaseBuild = (taskGraph.hasTask(':publishPlugins')
+      || (project.hasProperty('publishRelease') && publishRelease == 'true'))
+  if (releaseBuild && !buildNumber) {
     throw new GradleException("No valid build number found for release build.")
   }
 }
