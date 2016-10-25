@@ -35,8 +35,20 @@ project.ext {
   buildUser=System.getProperty('user.name')
   buildNumber="(development build by $buildUser)"
 }
+
+gradle.taskGraph.whenReady { taskGraph ->
+  project.ext.releaseBuild = (taskGraph.hasTask(':publishPlugins')
+      || (project.hasProperty('publishRelease') && publishRelease == 'true'))
+}
+
 if (!hasProperty('release') || (hasProperty('release') && release!='true')) {
-  project.version+='-SNAPSHOT'
+  project.version += '-SNAPSHOT'
+}
+else {
+  buildNumber="${(System.getenv()['buildNumber']) ?: ''}"
+  if (!buildNumber && releaseBuild) {
+    throw new GradleException("No valid build number found for release build.")
+  }
 }
 
 //Set java compatibilities
