@@ -17,7 +17,9 @@ buildscript {
 apply plugin: 'com.spindrift.aws-s3'
 
 import com.spindrift.gradle.aws.s3.tasks.S3Download
+import com.spindrift.gradle.aws.s3.tasks.S3Upload
 
+//Note this is not a working test. It needs to be configured with real values
 task download(type: S3Download) {
 
   bucket 'my.unique.bucket.name'
@@ -31,5 +33,12 @@ task download(type: S3Download) {
 //  accessKeyId 'my access key id'
 //  secretAccessKey 'my secret access key'
 
-
 }
+
+task upload(type: S3Upload) {
+  bucket 'my.unique.bucket.name'
+  region 'EU_WEST_1'  //This is the default but needs to be in com.amazonaws.regions.Regions enum format
+  key 'folder/path/myfile.xxx'
+  from 'build/myfile.xxx'
+}
+

@@ -1,6 +1,8 @@
 aws-s3
 ======
-This plugins provides simple S3 upload and download tasks.
+This plugins provides simple S3 upload and download tasks. Currently it assumes buckets already exists. These tasks are simply to facilitate upload and downloads
+for tasks such as CI or VM provisioning, etc and where the buckets are private. Hence no facilities for managing buckets or permissions are currently available.
+There are other more functional aws plugins but this is simply to create a very small, minimal plugin fit for specific purpose.
 
 Notes and Licensing
 ===================
@@ -25,6 +27,8 @@ buildscript {
 }
 
 apply plugin: 'com.spindrift.aws-s3'
+import com.spindrift.gradle.aws.s3.tasks.S3Download
+import com.spindrift.gradle.aws.s3.tasks.S3Upload
 ```
 
 Custom Task Types
@@ -48,6 +52,9 @@ For downloads:
 | accessKeyId | optional | String | -- | Valid AWS access key |
 | secretAccessKey | optional | String | -- | Valid AWS secret access key |
 
+For uploads:
+As above for downloads except the alternative from/to properties are reversed (from = local source, to = target key)
+
 
 Example Configuration
 =====================
@@ -65,8 +72,9 @@ The default task is build plus a local maven install so that the integration tes
 
 The integration tests are executed separately by running the alternative build file in the integration-test directory:
 ```
-./gradlew -b integration-test/build.gradle download
+./gradlew -b integration-test/build.gradle download upload
 ```
+Note the tests are just examples without working property values.
 
 To publish to the gradle plugin portal:
 

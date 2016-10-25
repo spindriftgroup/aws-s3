@@ -26,7 +26,7 @@ class S3Upload extends DefaultTask {
   static final String DEFAULT_REGION = "EU_WEST_1"
 
   String bucket
-  String fileKey
+  String key
   String region
   String fileName
   boolean overrideEnvironmentCredentials
@@ -40,9 +40,9 @@ class S3Upload extends DefaultTask {
 
   @TaskAction
   public void executeUpload() {
-    project.logger.lifecycle("Uploading $fileName to $bucket/$fileKey ....")
+    project.logger.lifecycle("Uploading $fileName to $bucket/$key ....")
     if (!region) region = DEFAULT_REGION
-    S3SimpleClient.upload(project, overrideEnvironmentCredentials, region, accessKeyId, secretAccessKey, bucket, fileKey, fileName)
+    S3SimpleClient.upload(project, overrideEnvironmentCredentials, region, accessKeyId, secretAccessKey, bucket, key, fileName)
   }
 
   //Utility methods for DSL style configuration
@@ -50,11 +50,11 @@ class S3Upload extends DefaultTask {
     this.bucket = bucket
   }
 
-  public fileKey(String fileKey) {
-    this.fileKey = fileKey
+  public key(String key) {
+    this.key = key
   }
-  public to(String fileKey) {
-    this.fileKey = fileKey
+  public to(String key) {
+    this.key = key
   }
 
   public region(String region) {
